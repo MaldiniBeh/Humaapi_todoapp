@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import { useState, useEffect } from "react";
+import Buttons from "./Hooks/Buttons/buttons";
+import Inputs from "./Hooks/Inputs/inputs";
+import Actions from "./Hooks/Actions/action";
+export default function App() {
+  let getStorage = localStorage.getItem("items");
+  const [color, setColor] = useState("");
+  const [message, setMessage] = useState(["", false, 0]);
+  const [item, setItem] = useState(JSON.parse(getStorage) || []);
+  const [task, setTask] = useState([]);
+  useEffect(() => {
+    localStorage.setItem("items", JSON.stringify(item));
+    return () => {};
+  }, [item]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="place-items-center bg-gray-100 min-h-screen grid">
+      <Buttons setColor={setColor} />
+      <Inputs
+        item={item}
+        color={color}
+        message={message}
+        setMessage={setMessage}
+        setItem={setItem}
+        setTask={setTask}
+      />
+      <Actions
+        message={message}
+        item={item}
+        setItem={setItem}
+        task={task}
+        setMessage={setMessage}
+        setTask={setTask}
+      />
     </div>
   );
 }
-
-export default App;
