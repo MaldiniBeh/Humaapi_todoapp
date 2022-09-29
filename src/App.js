@@ -8,31 +8,31 @@ export default function App() {
   const Task = new taskService();
   const [color, setColor] = useState("");
   const [message, setMessage] = useState(["", false, 0]);
-  const [item, setItem] = useState(JSON.parse(getStorage) || []);
-  const [task, setTask] = useState(Task.tasks);
+  const [items, setItems] = useState(JSON.parse(getStorage) || []);
+  const [tasks, setTasks] = useState(items);
 
   useEffect(() => {
-    localStorage.setItem("items", JSON.stringify(item));
+    localStorage.setItem("items", JSON.stringify(items));
     return () => {};
-  }, [item]);
+  }, [items]);
   return (
     <div className="place-items-center bg-gray-100 min-h-screen grid">
       <Buttons setColor={setColor} />
       <Inputs
-        item={item}
+        items={items}
         color={color}
         message={message}
         setMessage={setMessage}
-        setItem={setItem}
-        setTask={setTask}
+        setItems={setItems}
+        setTasks={setTasks}
       />
       <Actions
         message={message}
-        item={item}
-        setItem={setItem}
-        task={task}
+        items={items}
+        setItems={setItems}
+        tasks={tasks}
         setMessage={setMessage}
-        setTask={setTask}
+        setTasks={setTasks}
       />
     </div>
   );

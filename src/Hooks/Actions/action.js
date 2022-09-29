@@ -5,13 +5,38 @@ import taskService from "../../services/taskService";
 
 export default function Actions(props) {
   const Task = new taskService();
-  const { message, item, setItem, task, setMessage, setTask } = props;
+  const { message, items, setItems, tasks, setMessage, setTasks } = props;
+  function ongetCheck(event) {
+    const itemId = +event.target.value;
+    const findItem = items.find((el) => el.id === itemId);
+    findItem.isCheck = event.target.checked;
+    setItems([...items]);
+    setMessage([message[0], message[1], itemId]);
+  }
+  function onDelete() {
+    const deleted = Task.deleteTask(items);
+    setTasks([...deleted]);
+    setItems([...deleted]);
+    setMessage([message[0]]);
+  }
+  function filterShow() {
+    const show = Task.filterShow(items);
+    if (show.length > 0) {
+      setTasks([...show]);
+    }
+  }
+  function filterHide() {
+    const hide = Task.filterHide(items);
+    if (hide.length > 0) {
+      setTasks([...hide]);
+    }
+  }
   return (
     <div className="place-items-center  grid">
       <div className="h-48 w-48 bg-gray-300 rounded-lg mb-5 ">
-        {item.map(
+        {tasks.map(
           (el, i) =>
-            item.length && (
+            tasks.length && (
               <div
                 className={`${
                   el.ishide ? "hidden" : "block"
@@ -50,7 +75,7 @@ export default function Actions(props) {
           }
           msg={
             <div className="flex justify-between">
-              <span>{`${item.length > 0 ? `${item.length}` : ""}`}</span>
+              <span>{`${tasks.length > 0 ? `${tasks.length}` : ""}`}</span>
               <svg
                 className="w-6 h-6 mx-auto"
                 fill="none"
@@ -94,7 +119,7 @@ export default function Actions(props) {
 
         <Btn
           classcontent={
-            "text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2     dark:bg-blue-600 dark:hover:bg-blue-700               dark:focus:ring-blue-800"
+            "text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           }
           msg={
             <svg
@@ -124,7 +149,7 @@ export default function Actions(props) {
         <Btn
           classcontent="text-white bg-green-700 hover:bg-green-800 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 w-20"
           msg={"All"}
-          action={(el) => setItem([...task])}
+          action={(el) => setTasks([...items])}
         />
         <Btn
           classcontent={
@@ -151,31 +176,4 @@ export default function Actions(props) {
       </div>
     </div>
   );
-
-  function ongetCheck(event) {
-    const itemId = +event.target.value;
-    const findItem = item.find((el) => el.id === itemId);
-    findItem.isCheck = event.target.checked;
-    setItem([...task]);
-    setMessage([message[0], message[1], itemId]);
-  }
-
-  function onDelete() {
-    const deleted = Task.deleteTask(item);
-    setItem([...deleted]);
-    setTask([...deleted]);
-    setMessage([message[0]]);
-  }
-  function filterShow() {
-    const show = Task.filterShow(task);
-    if (show.length > 0) {
-      setItem([...show]);
-    }
-  }
-  function filterHide() {
-    const hide = Task.filterHide(task);
-    if (hide.length > 0) {
-      setItem([...hide]);
-    }
-  }
 }

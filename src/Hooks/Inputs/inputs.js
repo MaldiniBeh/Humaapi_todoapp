@@ -3,7 +3,33 @@ import taskService from "../../services/taskService";
 import "./inputs.css";
 export default function Inputs(props) {
   const Task = new taskService();
-  const { item, color, message, setMessage, setItem, setTask } = props;
+  const { items, color, message, setMessage, setItems, setTasks } = props;
+  Task.tasks = [...items];
+  function ongetChangeinput(event) {
+    if (message[1]) {
+      setMessage([event.target.value, true, message[2]]);
+    } else {
+      setMessage([event.target.value, false]);
+    }
+  }
+
+  function updateItem() {
+    Task.updateTask({ arrayTask: items, index: message[2], msg: message[0] });
+    setItems([...items]);
+    setMessage(["", false, 0]);
+  }
+  function addItem() {
+    const addTasked = {
+      id: items.length,
+      isHide: false,
+      isCheck: false,
+      content: message[0],
+    };
+    const getnewTask = Task.createTask(addTasked);
+    setMessage(["", false]);
+    setItems((prevItem) => [...prevItem, getnewTask]);
+    setTasks((prevTask) => [...prevTask, getnewTask]);
+  }
   return (
     <div
       className="bg-white rounded-lg grid grid-cols-4 gap-2 h-10 px-2 pt-1"
@@ -43,29 +69,4 @@ export default function Inputs(props) {
       </div>
     </div>
   );
-  function ongetChangeinput(event) {
-    if (message[1]) {
-      setMessage([event.target.value, true, message[2]]);
-    } else {
-      setMessage([event.target.value, false]);
-    }
-  }
-
-  function updateItem() {
-    Task.updateTask({ arrayTask: item, index: message[2], msg: message[0] });
-    setItem([...item]);
-    setMessage(["", false, 0]);
-  }
-  function addItem() {
-    const addTasked = {
-      id: item.length,
-      isHide: false,
-      isCheck: false,
-      content: message[0],
-    };
-    const getnewTask = Task.createTask(addTasked);
-    setMessage(["", false]);
-    setItem((prevItem) => [...prevItem, getnewTask]);
-    setTask((prevTask) => [...prevTask, getnewTask]);
-  }
 }

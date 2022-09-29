@@ -20,8 +20,6 @@ export default function Buttons(props) {
           onClick={() => setColor(el.color)}
         ></div>
       ))}
-
-      {/* <Inputs inputData={btnData} /> */}
     </div>
   );
 }

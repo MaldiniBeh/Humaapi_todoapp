@@ -2,6 +2,7 @@ export default class taskService {
   constructor() {
     this.tasks = [];
   }
+  list = () => this.tasks;
   filterShow = (array) => array.filter((el) => !el.isCheck);
   filterHide = (array) => array.filter((el) => el.isCheck);
 
