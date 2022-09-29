@@ -1,8 +1,10 @@
 import React from "react";
 import "./actions.css";
 import Btn from "../../Components/Btn/Btn";
+import taskService from "../../services/taskService";
 
 export default function Actions(props) {
+  const Task = new taskService();
   const { message, item, setItem, task, setMessage, setTask } = props;
   return (
     <div className="place-items-center  grid">
@@ -154,26 +156,24 @@ export default function Actions(props) {
     const itemId = +event.target.value;
     const findItem = item.find((el) => el.id === itemId);
     findItem.isCheck = event.target.checked;
-    // item.splice(itemId, 1, findItem);
     setItem([...task]);
     setMessage([message[0], message[1], itemId]);
   }
 
   function onDelete() {
-    // let deleted = [];
-    const deleted = item.filter((el) => !el.isCheck);
+    const deleted = Task.deleteTask(item);
     setItem([...deleted]);
     setTask([...deleted]);
     setMessage([message[0]]);
   }
   function filterShow() {
-    const show = task.filter((el) => !el.isCheck);
+    const show = Task.filterShow(task);
     if (show.length > 0) {
       setItem([...show]);
     }
   }
   function filterHide() {
-    const hide = task.filter((el) => el.isCheck);
+    const hide = Task.filterHide(task);
     if (hide.length > 0) {
       setItem([...hide]);
     }

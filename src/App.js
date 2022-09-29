@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import Buttons from "./Hooks/Buttons/buttons";
 import Inputs from "./Hooks/Inputs/inputs";
 import Actions from "./Hooks/Actions/action";
+import taskService from "./services/taskService";
 export default function App() {
   let getStorage = localStorage.getItem("items");
+  const Task = new taskService();
   const [color, setColor] = useState("");
   const [message, setMessage] = useState(["", false, 0]);
   const [item, setItem] = useState(JSON.parse(getStorage) || []);
-  const [task, setTask] = useState([]);
+  const [task, setTask] = useState(Task.tasks);
+
   useEffect(() => {
     localStorage.setItem("items", JSON.stringify(item));
     return () => {};

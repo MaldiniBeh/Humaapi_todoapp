@@ -1,9 +1,9 @@
 import React from "react";
-import "./inputs.css";
 import taskService from "../../services/taskService";
+import "./inputs.css";
 export default function Inputs(props) {
-  const { item, color, message, setMessage, setItem, setTask } = props;
   const Task = new taskService();
+  const { item, color, message, setMessage, setItem, setTask } = props;
   return (
     <div
       className="bg-white rounded-lg grid grid-cols-4 gap-2 h-10 px-2 pt-1"
@@ -20,7 +20,7 @@ export default function Inputs(props) {
       </div>
       <div
         className="rounded-full bg-blue-500 w-8 cursor-pointer"
-        onClick={onaddItem}
+        onClick={message[1] ? updateItem : addItem}
       >
         <svg
           className="w-8 h-8 text-white"
@@ -51,23 +51,21 @@ export default function Inputs(props) {
     }
   }
 
-  function onaddItem() {
-    let tasked;
-    if (message[1]) {
-      const newTask = item[message[2]];
-      newTask.content = message[0];
-      setItem([...item]);
-      setMessage(["", false, 0]);
-    } else {
-      tasked = {
-        id: item.length,
-        isHide: false,
-        isCheck: false,
-        content: message[0],
-      };
-      setMessage(["", false]);
-      setItem((prevItem) => [...prevItem, tasked]);
-      setTask((prevTask) => [...prevTask, tasked]);
-    }
+  function updateItem() {
+    Task.updateTask({ arrayTask: item, index: message[2], msg: message[0] });
+    setItem([...item]);
+    setMessage(["", false, 0]);
+  }
+  function addItem() {
+    const addTasked = {
+      id: item.length,
+      isHide: false,
+      isCheck: false,
+      content: message[0],
+    };
+    const getnewTask = Task.createTask(addTasked);
+    setMessage(["", false]);
+    setItem((prevItem) => [...prevItem, getnewTask]);
+    setTask((prevTask) => [...prevTask, getnewTask]);
   }
 }
