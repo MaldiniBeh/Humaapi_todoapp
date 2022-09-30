@@ -1,72 +1,71 @@
-import React from "react";
 import "./actions.css";
 import Btn from "../../Components/Btn/Btn";
-import taskService from "../../services/taskService";
+import { service } from "../../services/taskService";
 
 export default function Actions(props) {
-  const Task = new taskService();
-  const { message, items, setItems, tasks, setMessage, setTasks } = props;
+  const { message, items, setItems, setMessage } = props;
+
   function ongetCheck(event) {
     const itemId = +event.target.value;
     const findItem = items.find((el) => el.id === itemId);
     findItem.isCheck = event.target.checked;
-    setItems([...items]);
+    service.getCheck(findItem);
     setMessage([message[0], message[1], itemId]);
   }
+
   function onDelete() {
-    const deleted = Task.deleteTask(items);
-    setTasks([...deleted]);
+    // const getElcheck = items.filter((el) => el.isCheck);
+    // const subtractedId = getElcheck.map((el) => el.id);
+    const deleted = service.deleteTask();
     setItems([...deleted]);
     setMessage([message[0]]);
   }
+
   function filterShow() {
-    const show = Task.filterShow(items);
+    const show = service.filterShow();
     if (show.length > 0) {
-      setTasks([...show]);
+      setItems([...show]);
     }
   }
   function filterHide() {
-    const hide = Task.filterHide(items);
+    const hide = service.filterHide();
     if (hide.length > 0) {
-      setTasks([...hide]);
+      setItems([...hide]);
     }
   }
   return (
     <div className="place-items-center  grid">
       <div className="h-48 w-48 bg-gray-300 rounded-lg mb-5 ">
-        {tasks.map(
-          (el, i) =>
-            tasks.length && (
-              <div
-                className={`${
-                  el.ishide ? "hidden" : "block"
-                } flex justify-around p-2`}
-                key={i}
-              >
-                <input
-                  id={`ischeked${i}`}
-                  type="checkbox"
-                  onChange={ongetCheck}
-                  name={`cheked ${el.id}`}
-                  checked={el.isCheck}
-                  value={el.id}
-                  className="text-blue-600 bg-gray-100 rounded
+        {items.map((el, i) => (
+          <div
+            className={`${
+              el.ishide ? "hidden" : "block"
+            } flex justify-around p-2`}
+            key={i}
+          >
+            <input
+              id={`ischeked${i}`}
+              type="checkbox"
+              onChange={ongetCheck}
+              name={`cheked ${el.id}`}
+              checked={el.isCheck}
+              value={el.id}
+              className="text-blue-600 bg-gray-100 rounded
                      border-gray-300 focus:ring-blue-500
                       dark:focus:ring-blue-600
                        dark:ring-offset-gray-800 focus:ring-2
                         dark:bg-gray-700 dark:border-gray-600"
-                />
-                <div
-                  className={`${
-                    el.isCheck ? "bg-gray-100" : "bg-gray-500"
-                  } col-span-2  h-8 w-36 rounded-lg`}
-                  onClick={() => setMessage([el.content, true, el.id])}
-                >
-                  <span className="p-2">{el.content}</span>
-                </div>
-              </div>
-            )
-        )}
+            />
+            <div
+              className={`${
+                el.isCheck ? "bg-gray-100" : "bg-gray-500"
+              } col-span-2  h-8 w-36 rounded-lg`}
+              onClick={() => setMessage([el.content, true, el.id])}
+            >
+              <span className="p-2">{el.content}</span>
+            </div>
+          </div>
+        ))}
       </div>
       <div className="grid grid-cols-5">
         <Btn
@@ -75,7 +74,7 @@ export default function Actions(props) {
           }
           msg={
             <div className="flex justify-between">
-              <span>{`${tasks.length > 0 ? `${tasks.length}` : ""}`}</span>
+              <span>{`${items.length > 0 ? `${items.length}` : ""}`}</span>
               <svg
                 className="w-6 h-6 mx-auto"
                 fill="none"
@@ -149,7 +148,7 @@ export default function Actions(props) {
         <Btn
           classcontent="text-white bg-green-700 hover:bg-green-800 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 w-20"
           msg={"All"}
-          action={(el) => setTasks([...items])}
+          action={() => setItems([...service.list()])}
         />
         <Btn
           classcontent={

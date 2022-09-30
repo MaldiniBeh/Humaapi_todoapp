@@ -1,10 +1,8 @@
 import React from "react";
-import taskService from "../../services/taskService";
 import "./inputs.css";
+import { service } from "../../services/taskService";
 export default function Inputs(props) {
-  const Task = new taskService();
-  const { items, color, message, setMessage, setItems, setTasks } = props;
-  Task.tasks = [...items];
+  const { items, color, message, setMessage, setItems } = props;
   function ongetChangeinput(event) {
     if (message[1]) {
       setMessage([event.target.value, true, message[2]]);
@@ -14,8 +12,8 @@ export default function Inputs(props) {
   }
 
   function updateItem() {
-    Task.updateTask({ arrayTask: items, index: message[2], msg: message[0] });
-    setItems([...items]);
+    const newTasks = service.updateTask(message[2], message[0]);
+    setItems([...newTasks]);
     setMessage(["", false, 0]);
   }
   function addItem() {
@@ -25,10 +23,9 @@ export default function Inputs(props) {
       isCheck: false,
       content: message[0],
     };
-    const getnewTask = Task.createTask(addTasked);
+    const getnewTask = service.createTask(addTasked);
     setMessage(["", false]);
     setItems((prevItem) => [...prevItem, getnewTask]);
-    setTasks((prevTask) => [...prevTask, getnewTask]);
   }
   return (
     <div
