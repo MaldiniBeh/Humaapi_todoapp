@@ -1,7 +1,6 @@
 export default class Taskservice {
   constructor() {
     this.tasks = [];
-    this.index = [];
   }
   list = () => {
     const data = localStorage.getItem("items");
@@ -14,8 +13,9 @@ export default class Taskservice {
 
   filterHide = () => this.tasks.filter((el) => el.isCheck);
 
-  getCheck = (task) => {
-    this.tasks.splice(task.id, 1, task);
+  getCheck = (task, itemId) => {
+    const getTask = this.tasks.find((el) => el.id === itemId);
+    const toto = this.tasks.splice(this.tasks.indexOf(getTask), 1, task);
     localStorage.setItem("items", JSON.stringify(this.tasks));
   };
   createTask = (task) => {
@@ -30,11 +30,9 @@ export default class Taskservice {
   };
 
   updateTask = (index, msg) => {
-    console.log("index", index);
-    console.log("msg", msg);
     const newList = this.tasks.find((el) => el.id === index);
     newList.content = msg;
-    this.tasks.splice(index, 1, newList);
+    this.tasks.splice(this.tasks.indexOf(newList), 1, newList);
     localStorage.setItem("items", JSON.stringify(this.tasks));
     return this.tasks;
   };

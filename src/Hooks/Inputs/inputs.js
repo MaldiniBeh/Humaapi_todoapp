@@ -18,7 +18,7 @@ export default function Inputs(props) {
   }
   function addItem() {
     const addTasked = {
-      id: items.length,
+      id: new Date().getMilliseconds(),
       isHide: false,
       isCheck: false,
       content: message[0],
