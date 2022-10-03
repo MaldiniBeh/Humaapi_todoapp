@@ -1,7 +1,7 @@
 export default class Taskservice {
-  constructor() {
-    this.tasks = [];
-  }
+  tasks = [];
+  constructor() {}
+
   list = () => {
     const data = localStorage.getItem("items");
     if (data) {
@@ -13,12 +13,8 @@ export default class Taskservice {
 
   filterHide = () => this.tasks.filter((el) => el.isCheck);
 
-  getCheck = (task, itemId) => {
-    const getTask = this.tasks.find((el) => el.id === itemId);
-    const toto = this.tasks.splice(this.tasks.indexOf(getTask), 1, task);
-    localStorage.setItem("items", JSON.stringify(this.tasks));
-  };
   createTask = (task) => {
+    task.id = new Date().getMilliseconds();
     this.tasks = [...this.tasks, task];
     localStorage.setItem("items", JSON.stringify(this.tasks));
     return task;
@@ -29,10 +25,14 @@ export default class Taskservice {
     return task;
   };
 
-  updateTask = (index, msg) => {
+  updateTask = ({ index, msg, task }) => {
     const newList = this.tasks.find((el) => el.id === index);
-    newList.content = msg;
-    this.tasks.splice(this.tasks.indexOf(newList), 1, newList);
+    if (task) {
+      this.tasks.splice(this.tasks.indexOf(newList), 1, task);
+    } else {
+      newList.content = msg;
+      this.tasks.splice(this.tasks.indexOf(newList), 1, newList);
+    }
     localStorage.setItem("items", JSON.stringify(this.tasks));
     return this.tasks;
   };

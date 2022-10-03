@@ -12,13 +12,12 @@ export default function Inputs(props) {
   }
 
   function updateItem() {
-    const newTasks = service.updateTask(message[2], message[0]);
+    const newTasks = service.updateTask({ index: message[2], msg: message[0] });
     setItems([...newTasks]);
     setMessage(["", false, 0]);
   }
   function addItem() {
     const addTasked = {
-      id: new Date().getMilliseconds(),
       isHide: false,
       isCheck: false,
       content: message[0],

@@ -9,7 +9,7 @@ export default function Actions(props) {
     const itemId = +event.target.value;
     const findItem = items.find((el) => el.id === itemId);
     findItem.isCheck = event.target.checked;
-    service.getCheck(findItem, itemId);
+    service.updateTask({ index: itemId, task: findItem });
     setMessage([message[0], message[1], itemId]);
   }
 
