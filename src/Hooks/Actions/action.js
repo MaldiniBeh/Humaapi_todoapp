@@ -8,64 +8,75 @@ export default function Actions(props) {
   function ongetCheck(event) {
     const itemId = +event.target.value;
     const findItem = items.find((el) => el.id === itemId);
-    findItem.isCheck = event.target.checked;
-    service.updateTask({ index: itemId, task: findItem });
+    findItem.isCompleted = event.target.checked;
+    service.updateTask({
+      index: itemId,
+      msg: findItem.content,
+      isCompleted: findItem.isCompleted,
+    });
     setMessage([message[0], message[1], itemId]);
   }
 
+  function readTask(id) {
+    const getTask = service.readTask(id);
+    setMessage([getTask.content, true, id]);
+  }
+
   function onDelete() {
-    // const getElcheck = items.filter((el) => el.isCheck);
-    // const subtractedId = getElcheck.map((el) => el.id);
-    const deleted = service.deleteTask();
-    setItems([...deleted]);
-    setMessage([message[0]]);
+    const getTaskCompleted = service.list("hide").map((el) => el.id);
+    if (getTaskCompleted.length) {
+      const deleted = service.deleteTask(getTaskCompleted);
+      setItems([...deleted]);
+      setMessage([message[0]]);
+    }
+  }
+  function all() {
+    const all = service.list("all");
+    if (all.length > 0) setItems([...all]);
   }
 
   function filterShow() {
-    const show = service.filterShow();
-    if (show.length > 0) {
-      setItems([...show]);
-    }
+    const show = service.list("show");
+    if (show.length > 0) setItems([...show]);
   }
+
   function filterHide() {
-    const hide = service.filterHide();
-    if (hide.length > 0) {
-      setItems([...hide]);
-    }
+    const hide = service.list("hide");
+    if (hide.length > 0) setItems([...hide]);
   }
   return (
     <div className="place-items-center  grid">
-      <div className="h-48 w-48 bg-gray-300 rounded-lg mb-5 ">
-        {items.map((el, i) => (
-          <div
-            className={`${
-              el.ishide ? "hidden" : "block"
-            } flex justify-around p-2`}
-            key={i}
-          >
-            <input
-              id={`ischeked${i}`}
-              type="checkbox"
-              onChange={ongetCheck}
-              name={`cheked ${el.id}`}
-              checked={el.isCheck}
-              value={el.id}
-              className="text-blue-600 bg-gray-100 rounded
+      <div className="h-48 w-48 bg-gray-300 rounded-lg mb-5 overflow-auto">
+        {items &&
+          items.map((el, i) => (
+            <div
+              className={`${
+                el.ishide ? "hidden" : "block"
+              } flex justify-around p-2`}
+              key={i}
+            >
+              <input
+                id={`ischeked${i}`}
+                type="checkbox"
+                onChange={ongetCheck}
+                checked={el.isCompleted}
+                value={el.id}
+                className="text-blue-600 bg-gray-100 rounded
                      border-gray-300 focus:ring-blue-500
                       dark:focus:ring-blue-600
                        dark:ring-offset-gray-800 focus:ring-2
                         dark:bg-gray-700 dark:border-gray-600"
-            />
-            <div
-              className={`${
-                el.isCheck ? "bg-gray-100" : "bg-gray-500"
-              } col-span-2  h-8 w-36 rounded-lg`}
-              onClick={() => setMessage([el.content, true, el.id])}
-            >
-              <span className="p-2">{el.content}</span>
+              />
+              <div
+                className={`${
+                  el.isCompleted ? "bg-gray-100" : "bg-gray-500"
+                } col-span-2  h-8 w-36 rounded-lg`}
+                onClick={() => readTask(el.id)}
+              >
+                <span className="p-2">{el.content}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
       <div className="grid grid-cols-5">
         <Btn
@@ -148,7 +159,7 @@ export default function Actions(props) {
         <Btn
           classcontent="text-white bg-green-700 hover:bg-green-800 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 w-20"
           msg={"All"}
-          action={() => setItems([...service.list()])}
+          action={all}
         />
         <Btn
           classcontent={

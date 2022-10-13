@@ -6,7 +6,10 @@ import { service } from "./services/taskService";
 export default function App() {
   const [color, setColor] = useState("");
   const [message, setMessage] = useState(["", false, 0]);
-  const [items, setItems] = useState(service.list());
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    setItems(service.list());
+  }, []);
 
   return (
     <div className="place-items-center bg-gray-100 min-h-screen grid">

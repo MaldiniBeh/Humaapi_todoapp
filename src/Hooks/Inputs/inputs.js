@@ -12,19 +12,27 @@ export default function Inputs(props) {
   }
 
   function updateItem() {
-    const newTasks = service.updateTask({ index: message[2], msg: message[0] });
+    const content = items.find((el) => el.id === message[2]);
+    const newTasks = service.updateTask({
+      index: message[2],
+      msg: message[0],
+      isCompleted: content.isCompleted,
+    });
     setItems([...newTasks]);
     setMessage(["", false, 0]);
   }
+
   function addItem() {
     const addTasked = {
-      isHide: false,
-      isCheck: false,
       content: message[0],
+      isCompleted: false,
     };
-    const getnewTask = service.createTask(addTasked);
-    setMessage(["", false]);
-    setItems((prevItem) => [...prevItem, getnewTask]);
+    if (addTasked.content) {
+      service.createTask(addTasked);
+      setMessage(["", false]);
+      const items = service.list();
+      setItems(items);
+    }
   }
   return (
     <div

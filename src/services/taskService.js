@@ -1,45 +1,50 @@
 export default class Taskservice {
-  tasks = [];
-  constructor() {}
-
-  list = () => {
+  list = (filter) => {
     const data = localStorage.getItem("items");
     if (data) {
-      this.tasks = [...JSON.parse(data)];
+      const tasks = [...JSON.parse(data)];
+      switch (filter) {
+        case "show":
+          return tasks.filter((task) => !task.isCompleted);
+        case "hide":
+          return tasks.filter((task) => task.isCompleted);
+        default:
+          return tasks;
+      }
     }
-    return this.tasks;
+    return [];
   };
-  filterShow = () => this.tasks.filter((el) => !el.isCheck);
-
-  filterHide = () => this.tasks.filter((el) => el.isCheck);
 
   createTask = (task) => {
     task.id = new Date().getMilliseconds();
-    this.tasks = [...this.tasks, task];
-    localStorage.setItem("items", JSON.stringify(this.tasks));
+    const tasks = [...this.list(), task];
+    localStorage.setItem("items", JSON.stringify(tasks));
     return task;
   };
 
   readTask = (id) => {
-    const task = this.tasks.find((el) => el.id === id);
-    return task;
-  };
-
-  updateTask = ({ index, msg, task }) => {
-    const newList = this.tasks.find((el) => el.id === index);
-    if (task) {
-      this.tasks.splice(this.tasks.indexOf(newList), 1, task);
-    } else {
-      newList.content = msg;
-      this.tasks.splice(this.tasks.indexOf(newList), 1, newList);
+    const data = localStorage.getItem("items");
+    if (data) {
+      const tasks = [...JSON.parse(data)];
+      const task = tasks.find((el) => el.id === id);
+      return task;
     }
-    localStorage.setItem("items", JSON.stringify(this.tasks));
-    return this.tasks;
+    return undefined;
   };
 
-  deleteTask = () => {
-    // const newTasks = this.tasks.filter((el) => !index.includes(el.id));
-    const newTasks = this.filterShow();
+  updateTask = ({ index, msg, isCompleted }) => {
+    const tasks = this.list();
+    const newList = tasks.find((el) => el.id === index);
+    const findeIndex = tasks.findIndex((el) => el.id === newList.id);
+    newList.content = msg;
+    newList.isCompleted = isCompleted;
+    tasks.splice(findeIndex, 1, newList);
+    localStorage.setItem("items", JSON.stringify(tasks));
+    return tasks;
+  };
+
+  deleteTask = (ids) => {
+    const newTasks = this.list().filter((el) => !ids.includes(el.id));
     localStorage.setItem("items", JSON.stringify(newTasks));
     return newTasks;
   };
