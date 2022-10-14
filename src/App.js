@@ -8,7 +8,7 @@ export default function App() {
   const [message, setMessage] = useState(["", false, 0]);
   const [items, setItems] = useState([]);
   useEffect(() => {
-    setItems(service.list());
+    service.list().then((res) => setItems(res));
   }, []);
 
   return (

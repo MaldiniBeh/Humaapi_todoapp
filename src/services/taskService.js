@@ -10,18 +10,17 @@ export default class Taskservice {
       body: JSON.stringify(body),
     };
   };
+
   list = async (filter) => {
     try {
       const res = await fetch(this.baseUrl, this.fetchParam("GET"));
-      const tasks = await res.json().then((res) => res);
-      console.log("task", tasks);
+      const tasks = await res.json();
       switch (filter) {
         case "show":
           return tasks.filter((task) => !task.isCompleted);
         case "hide":
           return tasks.filter((task) => task.isCompleted);
         default:
-          console.log("task", tasks);
           return tasks;
       }
     } catch (err) {
@@ -34,37 +33,42 @@ export default class Taskservice {
     task.id = new Date().getMilliseconds();
     try {
       const res = await fetch(this.baseUrl, this.fetchParam("POST", task));
-      return await res.json().then((res) => res);
+      return await res.json();
     } catch (err) {
       console.log(err);
     }
   };
 
-  readTask = (id) => {
-    const data = localStorage.getItem("items");
-    if (data) {
-      const tasks = [...JSON.parse(data)];
-      const task = tasks.find((el) => el.id === id);
-      return task;
+  readTask = async (id) => {
+    try {
+      const res = await fetch(`${this.baseUrl}${id}`, this.fetchParam("GET"));
+      return await res.json();
+    } catch (error) {
+      console.log(error);
     }
-    return undefined;
   };
 
-  updateTask = ({ index, msg, isCompleted }) => {
-    const tasks = this.list();
-    const newList = tasks.find((el) => el.id === index);
-    const findeIndex = tasks.findIndex((el) => el.id === newList.id);
-    newList.content = msg;
-    newList.isCompleted = isCompleted;
-    tasks.splice(findeIndex, 1, newList);
-    localStorage.setItem("items", JSON.stringify(tasks));
-    return tasks;
+  updateTask = async (task) => {
+    try {
+      const res = await fetch(
+        `${this.baseUrl}${task.id}`,
+        this.fetchParam("PUT", task)
+      );
+      return await res.json();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  deleteTask = (ids) => {
-    const newTasks = this.list().filter((el) => !ids.includes(el.id));
-    localStorage.setItem("items", JSON.stringify(newTasks));
-    return newTasks;
+  deleteTask = async (ids) => {
+    try {
+      const deleteAll = ids.forEach(async (el) => {
+        await fetch(`${this.baseUrl}${el}`, this.fetchParam("DELETE"));
+      });
+      await Promise.all([deleteAll]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 export const service = new Taskservice();

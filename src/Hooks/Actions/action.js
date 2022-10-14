@@ -9,44 +9,39 @@ export default function Actions(props) {
     const itemId = +event.target.value;
     const findItem = items.find((el) => el.id === itemId);
     findItem.isCompleted = event.target.checked;
-    service.updateTask({
-      index: itemId,
-      msg: findItem.content,
-      isCompleted: findItem.isCompleted,
-    });
+    service.updateTask(findItem);
     setMessage([message[0], message[1], itemId]);
   }
 
   function readTask(id) {
-    const getTask = service.readTask(id);
-    setMessage([getTask.content, true, id]);
+    service.readTask(id).then((res) => setMessage([res.content, true, id]));
   }
 
   function onDelete() {
-    const getTaskCompleted = service.list("hide").map((el) => el.id);
-    if (getTaskCompleted.length) {
-      const deleted = service.deleteTask(getTaskCompleted);
-      setItems([...deleted]);
-      setMessage([message[0]]);
-    }
+    let ids;
+    service.list("hide").then((res) => (ids = res));
+    console.log("toot", getTaskCompleted);
+    return;
+    // if (getTaskCompleted.length) {
+    //   const deleted = service.deleteTask(getTaskCompleted);
+    //   setItems([...deleted]);
+    //   setMessage([message[0]]);
+    // }
   }
   function all() {
-    const all = service.list("all");
-    if (all.length > 0) setItems([...all]);
+    service.list().then((res) => setItems(res));
   }
 
   function filterShow() {
-    const show = service.list("show");
-    if (show.length > 0) setItems([...show]);
+    service.list("show").then((res) => setItems(res));
   }
 
   function filterHide() {
-    const hide = service.list("hide");
-    if (hide.length > 0) setItems([...hide]);
+    service.list("hide").then((res) => setItems(res));
   }
   return (
     <div className="place-items-center  grid">
-      <div className="h-48 w-48 bg-gray-300 rounded-lg mb-5 overflow-auto">
+      <div className="h-80 w-48 bg-gray-300 rounded-lg mb-5 overflow-auto">
         {items &&
           items.map((el, i) => (
             <div
@@ -70,7 +65,7 @@ export default function Actions(props) {
               <div
                 className={`${
                   el.isCompleted ? "bg-gray-100" : "bg-gray-500"
-                } col-span-2  h-8 w-36 rounded-lg`}
+                } col-span-2  h-8 w-36 rounded-lg overflow-auto`}
                 onClick={() => readTask(el.id)}
               >
                 <span className="p-2">{el.content}</span>

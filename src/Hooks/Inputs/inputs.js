@@ -13,12 +13,8 @@ export default function Inputs(props) {
 
   function updateItem() {
     const content = items.find((el) => el.id === message[2]);
-    const newTasks = service.updateTask({
-      index: message[2],
-      msg: message[0],
-      isCompleted: content.isCompleted,
-    });
-    setItems([...newTasks]);
+    content.content = message[0];
+    service.updateTask(content);
     setMessage(["", false, 0]);
   }
 
@@ -30,8 +26,7 @@ export default function Inputs(props) {
     if (addTasked.content) {
       service.createTask(addTasked);
       setMessage(["", false]);
-      const items = service.list();
-      setItems(items);
+      service.list().then((res) => setItems(res));
     }
   }
   return (
