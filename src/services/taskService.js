@@ -1,25 +1,43 @@
 export default class Taskservice {
-  list = (filter) => {
-    const data = localStorage.getItem("items");
-    if (data) {
-      const tasks = [...JSON.parse(data)];
+  baseUrl = "http://localhost:3001/api/v1/task/";
+  fetchParam = (method, body) => {
+    return {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(body),
+    };
+  };
+  list = async (filter) => {
+    try {
+      const res = await fetch(this.baseUrl, this.fetchParam("GET"));
+      const tasks = await res.json().then((res) => res);
+      console.log("task", tasks);
       switch (filter) {
         case "show":
           return tasks.filter((task) => !task.isCompleted);
         case "hide":
           return tasks.filter((task) => task.isCompleted);
         default:
+          console.log("task", tasks);
           return tasks;
       }
+    } catch (err) {
+      console.log(err);
+      return [];
     }
-    return [];
   };
 
-  createTask = (task) => {
+  createTask = async (task) => {
     task.id = new Date().getMilliseconds();
-    const tasks = [...this.list(), task];
-    localStorage.setItem("items", JSON.stringify(tasks));
-    return task;
+    try {
+      const res = await fetch(this.baseUrl, this.fetchParam("POST", task));
+      return await res.json().then((res) => res);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   readTask = (id) => {
