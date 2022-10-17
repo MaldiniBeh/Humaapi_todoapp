@@ -1,5 +1,7 @@
 export default class Taskservice {
-  baseUrl = "http://localhost:3001/api/v1/task/";
+  constructor(baseUrl) {
+    this.baseUrl = baseUrl;
+  }
   fetchParam = (method, body) => {
     return {
       method: method,
@@ -58,6 +60,7 @@ export default class Taskservice {
     } catch (error) {
       console.log(error);
     }
+    //json-server --id appId db.json --routes routes.json
   };
 
   deleteTask = async (ids) => {
@@ -71,4 +74,4 @@ export default class Taskservice {
     }
   };
 }
-export const service = new Taskservice();
+export const service = new Taskservice("http://localhost:3001/api/v1/task/");

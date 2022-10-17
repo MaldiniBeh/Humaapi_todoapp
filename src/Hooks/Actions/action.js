@@ -19,14 +19,13 @@ export default function Actions(props) {
 
   function onDelete() {
     let ids;
-    service.list("hide").then((res) => (ids = res));
-    console.log("toot", getTaskCompleted);
-    return;
-    // if (getTaskCompleted.length) {
-    //   const deleted = service.deleteTask(getTaskCompleted);
-    //   setItems([...deleted]);
-    //   setMessage([message[0]]);
-    // }
+    service.list("hide").then((res) => {
+      ids = res.map((el) => el.id);
+      service.deleteTask(ids).then(() => {
+        all();
+      });
+      setMessage([message[0]]);
+    });
   }
   function all() {
     service.list().then((res) => setItems(res));
